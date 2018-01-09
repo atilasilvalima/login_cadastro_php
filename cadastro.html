@@ -1,0 +1,28 @@
+<!DOCTYPE HTML>
+
+<html lang="pt-br">
+    <head>
+        <meta charset="UTF-8"/>
+    </head>
+
+    <body>
+        <form method="post" action="autenticarCadastro.php">
+            <fieldset>
+                <legend>Cadastro</legend>
+
+                <input type="text" name="nome" placeholder="Nome completo" pattern="[A-Za-zÀ-ÿ\s]+"
+                       title="Não utilize caracteres especiais! (Apenas acentos são permitidos)" required/>
+
+                <input type="email" name="email" placeholder="Email" required/>
+
+                <input type="password" name="senha" placeholder="Senha" pattern=".{8,16}"
+                       title="Senha muito curta, utilize no mínimo 8 e no máximo 16 caracteres" required/>
+
+                <input type="password" name="confirmaSenha" placeholder="Confirmar Senha" pattern=".{8,16}"
+                       title="Senha muito curta, utilize no mínimo 8 e no máximo 16 caracteres" required/>
+
+                <input type="submit" value="CADASTRAR"/>
+            </fieldset>
+        </form>
+    </body>
+</html>
