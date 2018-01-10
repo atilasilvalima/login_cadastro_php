@@ -48,8 +48,8 @@
             $conexao = new Conexao('localhost', 'root', '', 'db_teste');
             $db = $conexao->conectar();
             $db->set_charset('UTF8');
-            $usuario = new Usuario($nome, $email, $senha);
 
+            $usuario = new Usuario($nome, $email, $senha);
             $resultadoCadastro = $usuario->cadastrar($db, true);
 
             if($resultadoCadastro == 0) {

@@ -21,42 +21,42 @@
          * @param $dbname
          */
         public function __construct(string $hostname, string $username, string $password, string $dbname='') {
-            $this->setHostname($hostname);
-            $this->setUsername($username);
-            $this->setPassword($password);
-            $this->setDbname($dbname);
+            $this->hostname = $hostname;
+            $this->username = $username;
+            $this->password = $password;
+            $this->dbname = $dbname;
         }
 
         /**
-         * @return mixed
+         * @return string
          */
         public function getHostname(): string {
             return $this->hostname;
         }
 
         /**
-         * @param mixed $hostname
+         * @param string $hostname
          */
-        public function setHostname($hostname): void {
+        public function setHostname(string $hostname): void {
             $this->hostname = $hostname;
         }
 
         /**
-         * @return mixed
+         * @return string
          */
         public function getUsername(): string {
             return $this->username;
         }
 
         /**
-         * @param mixed $username
+         * @param string $username
          */
-        public function setUsername($username): void {
+        public function setUsername(string $username): void {
             $this->username = $username;
         }
 
         /**
-         * @return mixed
+         * @return string
          */
         public function getPassword(): string {
             return $this->password;
@@ -70,28 +70,28 @@
         }
 
         /**
-         * @return mixed
+         * @return string
          */
         public function getDbname(): string {
             return $this->dbname;
         }
 
         /**
-         * @param mixed $dbname
+         * @param string $dbname
          */
-        public function setDbname($dbname): void {
+        public function setDbname(string $dbname): void {
             $this->dbname = $dbname;
         }
 
         /**
-         * @return mixed
+         * @return mysqli
          */
         public function getDb(): mysqli {
             return $this->db;
         }
 
         /**
-         * @param mixed $db
+         * @param mysqli $db
          */
         public function setDb(mysqli $db): void {
             $this->db = $db;
@@ -104,6 +104,9 @@
             $this->db->select_db($dbname);
         }
 
+        /**
+         * @return mysqli
+         */
         public function conectar(): mysqli {
             $mysqli = new mysqli(
                 $this->hostname,

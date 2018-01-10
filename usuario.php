@@ -19,11 +19,11 @@
          * @param $email
          * @param $senha
          */
-        public function __construct(string $nome, string $email, string $senha, int $id = 0) {
-            $this->setNome($nome);
-            $this->setEmail($email);
-            $this->setSenha($senha);
-            $this->setId($id);
+        public function __construct(string $nome = '', string $email = '', string $senha = '', int $id = 0) {
+            $this->nome = $nome;
+            $this->email = $email;
+            $this->senha = $senha;
+            $this->id = $id;
         }
 
         /**
@@ -94,6 +94,8 @@
         }
 
         /**
+         * Converte a classe para JSON
+         *
          * @return string
          */
         public function jsonSerialize(): string {
@@ -101,9 +103,9 @@
         }
 
         /**
-         * return 0 -> usuario cadastrado com sucesso
-         * return 1 -> usuario ja cadastrado
-         * return -1 -> erro na execucao das querys (pode ser consultada na variavel $db->error)
+         * return 0 -> usuario cadastrado com sucesso 'cd'
+         * return 1 -> usuario ja cadastrado '^cd'
+         * return -1 -> erro na execucao das querys (pode ser consultada na variavel $db->error) 'er'
          *
          * @param mysqli $db
          * @param bool $criptograr
@@ -137,6 +139,52 @@
                     } else {
                         return -1;
                     }
+                }
+
+            } else {
+                return -1;
+            }
+        }
+
+        /**
+         * return 0 -> usuario logado com sucesso 'lg'
+         * return 1 -> usuario (email) não cadastrado '^em'
+         * return 2 -> senha incorreta '^pw'
+         * return -1 -> erro na execucao da query (pode ser consultada na variavel $db->error) 'er'
+         *
+         * @param mysqli $db
+         * @param string $email
+         * @param string $senha
+         * @return int
+         */
+        public function logar(mysqli $db, string $email, string $senha): int {
+            $sql = $db->prepare("SELECT id, nome, senha FROM usuarios WHERE email = ?");
+
+            if ($sql) {
+                $sql->bind_param('s', $email);
+                $sql->execute();
+                $sql->bind_result($id, $nome, $senhaCriptografada);
+                $sql->store_result();
+
+                if ($sql->num_rows > 0) {
+                    $sql->fetch();
+
+                    if(password_verify($senha, $senhaCriptografada)) {
+                        $this->nome = $nome;
+                        $this->email = $email;
+                        $this->senha = $senhaCriptografada;
+                        $this->id = $id;
+                        $sql->close();
+                        return 0;
+
+                    } else {
+                        $sql->close();
+                        return 2;
+                    }
+
+                } else {
+                    $sql->close();
+                    return 1;
                 }
 
             } else {

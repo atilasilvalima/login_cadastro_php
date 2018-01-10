@@ -39,41 +39,25 @@
             $db = $conexao->conectar();
             $db->set_charset('UTF8');
 
-            $sql = $db->prepare("SELECT id, nome, senha FROM usuarios WHERE email = ?");
+            $usuario = new Usuario();
+            $resultadoLogin = $usuario->logar($db, $email, $senha);
 
-            if ($sql) {
-                $sql->bind_param('s', $email);
-                $sql->execute();
-                $sql->bind_result($id, $nome, $senhaCriptografada);
-                $sql->store_result();
+            if($resultadoLogin == 0) {
+                session_start();
+                $_SESSION['usuarioLogado'] = $usuario->jsonSerialize();
+                /*Print Usuario JSON*/
+                echo $_SESSION['usuarioLogado'];
+                /*Redireciona para a pagina desejada*/
+                echo "<script> alert('Login efetuado com sucesso!') </script>";
+                echo "<script> location.href='#logado' </script>";
 
-                if ($sql->num_rows > 0) {
-                    $sql->fetch();
+            } else if ($resultadoLogin == 1){
+                echo "<script> alert('Este email não está cadastrado') </script>";
+                echo "<script> location.href='login.html' </script>";
 
-                    if(password_verify($senha, $senhaCriptografada)) {
-                        $usuario = new Usuario($nome, $email, $senhaCriptografada, $id);
-                        $sql->close();
-
-                        /*Inicia uma sessao que contem o Usuario no formato JSON*/
-                        session_start();
-                        $_SESSION['usuarioLogado'] = $usuario->jsonSerialize();
-
-                        /*Print Usuario JSON*/
-                        echo $_SESSION['usuarioLogado'];
-
-                        /*Redireciona para a pagina desejada*/
-                        echo "<script> alert('Login efetuado com sucesso!') </script>";
-                        echo "<script> location.href='#logado' </script>";
-
-                    } else {
-                        echo "<script> alert('Senha incorreta!') </script>";
-                        echo "<script> location.href='login.html' </script>";
-                    }
-
-                } else {
-                    echo "<script> alert('Este email não está cadastrado') </script>";
-                    echo "<script> location.href='login.html' </script>";
-                }
+            } else if ($resultadoLogin == 2) {
+                echo "<script> alert('Senha incorreta!') </script>";
+                echo "<script> location.href='login.html' </script>";
 
             } else {
                 //TODO enviar email de alerta contendo $db->error
@@ -91,4 +75,45 @@
         unset($conexao);
         unset($usuario);
     }
+//            $sql = $db->prepare("SELECT id, nome, senha FROM usuarios WHERE email = ?");
+//
+//            if ($sql) {
+//                $sql->bind_param('s', $email);
+//                $sql->execute();
+//                $sql->bind_result($id, $nome, $senhaCriptografada);
+//                $sql->store_result();
+//
+//                if ($sql->num_rows > 0) {
+//                    $sql->fetch();
+//
+//                    if(password_verify($senha, $senhaCriptografada)) {
+//                        $usuario = new Usuario($nome, $email, $senhaCriptografada, $id);
+//                        $sql->close();
+//
+//                        /*Inicia uma sessao que contem o Usuario no formato JSON*/
+//                        session_start();
+//                        $_SESSION['usuarioLogado'] = $usuario->jsonSerialize();
+//
+//                        /*Print Usuario JSON*/
+//                        echo $_SESSION['usuarioLogado'];
+//
+//                        /*Redireciona para a pagina desejada*/
+//                        echo "<script> alert('Login efetuado com sucesso!') </script>";
+//                        echo "<script> location.href='#logado' </script>";
+//
+//                    } else {
+//                        echo "<script> alert('Senha incorreta!') </script>";
+//                        echo "<script> location.href='login.html' </script>";
+//                    }
+//
+//                } else {
+//                    echo "<script> alert('Este email não está cadastrado') </script>";
+//                    echo "<script> location.href='login.html' </script>";
+//                }
+//
+//            } else {
+//                //TODO enviar email de alerta contendo $db->error
+//                echo "<script> alert('Ops! Houve um erro, tente novamente mais tarde!') </script>";
+//                echo "<script> location.href='login.html' </script>";
+//            }
 ?>
